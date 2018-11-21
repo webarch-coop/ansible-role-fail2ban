@@ -72,4 +72,4 @@ ansible-playbook fail2ban.yml
 
 ## TODO
 
-* Add checks for `changed_when` etc.
+* Add variables and documentation for configuring different services, WordPress, phpMyAdmin etc 
