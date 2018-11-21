@@ -1,0 +1,44 @@
+# See http://www.pontikis.net/blog/fail2ban-install-config-debian-wheezy
+
+[DEFAULT]
+ignoreip  = 127.0.0.1 81.95.52.0/24 
+bantime   = 86400
+#destemail = root@localhost 
+banaction = iptables-multiport
+logpath   = /var/log/auth.log
+
+# JAILS
+[sshd]
+enabled   = true
+maxretry  = 5
+
+# https://wordpress.org/plugins/wp-fail2ban/
+[wordpress]
+enabled   = true
+filter    = wordpress
+port      = http,https
+maxretry  = 5
+logpath   = /var/log/auth.log
+
+# https://www.drupal.org/project/fail2ban
+#[drupal-comment]
+#enabled  = false
+#filter   = drupal-comment
+#port     = http,https
+#maxretry = 0
+
+# https://www.drupal.org/project/fail2ban
+[drupal-auth]
+enabled = true
+filter  = drupal-auth
+port    = http,https
+maxretry = 5
+logpath = /var/log/messages
+
+# https://www.phryneas.de/fail2ban-phpmyadmin/
+[phpmyadmin]
+enabled = true
+port = http,https
+filter = phpmyadmin
+maxretry = 5
+logpath = /var/log/apache2/phpmyadmin_access.log

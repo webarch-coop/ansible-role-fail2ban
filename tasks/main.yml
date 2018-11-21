@@ -1,0 +1,33 @@
+---
+- name: fail2ban installed
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+  register: fail2ban_present
+  tags:
+    - fail2ban
+
+- name: fail2ban filters in place
+  copy:
+    src: files/filter.d/
+    dest: /etc/fail2ban/filter.d/
+  register: fail2ban_filters 
+  tags:
+    - fail2ban
+
+- name: fail2ban jail.local in place
+  copy:
+    src: files/jail.local
+    dest: /etc/fail2ban/jail.local
+  register: fail2ban_jail_local
+  tags:
+    - fail2ban
+
+- name: fail2ban restarted
+  service: 
+    name: fail2ban
+    state: restarted 
+  when: fail2ban_present.changed or fail2ban_filters.changed or fail2ban_jail_local.changed
+  tags:
+    - fail2ban
