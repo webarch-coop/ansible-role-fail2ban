@@ -12,7 +12,7 @@
   copy:
     src: files/filter.d/
     dest: /etc/fail2ban/filter.d/
-  register: fail2ban_filters 
+  register: fail2ban_filters
   tags:
     - fail2ban
 
@@ -25,9 +25,9 @@
     - fail2ban
 
 - name: fail2ban restarted
-  service: 
+  service:
     name: fail2ban
-    state: restarted 
+    state: restarted
   when: fail2ban_present.changed or fail2ban_filters.changed or fail2ban_jail_local.changed
   tags:
     - fail2ban
