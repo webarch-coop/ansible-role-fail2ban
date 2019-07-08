@@ -12,13 +12,20 @@ logpath   = /var/log/auth.log
 enabled   = true
 maxretry  = 5
 
-# https://wordpress.org/plugins/wp-fail2ban/
-[wordpress]
-enabled   = true
-filter    = wordpress
-port      = http,https
-maxretry  = 5
-logpath   = /var/log/auth.log
+# https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html 
+[wordpress-hard]
+enabled = true
+filter = wordpress-hard
+logpath = /var/log/auth.log
+maxretry = 1
+port = http,https
+
+[wordpress-soft]
+enabled = true
+filter = wordpress-soft
+logpath = /var/log/auth.log
+maxretry = 3
+port = http,https
 
 # https://www.drupal.org/project/fail2ban
 #[drupal-comment]
