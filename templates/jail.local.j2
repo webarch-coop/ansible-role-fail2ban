@@ -1,7 +1,7 @@
 # See http://www.pontikis.net/blog/fail2ban-install-config-debian-wheezy
 
 [DEFAULT]
-ignoreip  = 127.0.0.1 81.95.52.0/24 
+ignoreip  = 127.0.0.1 {{ fail2ban_whitelist }}
 bantime   = 86400
 #destemail = root@localhost 
 banaction = iptables-multiport
@@ -48,4 +48,4 @@ enabled = true
 port = http,https
 filter = phpmyadmin
 maxretry = 5
-logpath = /var/log/apache2/phpmyadmin_access.log
+logpath = {{ fail2ban_phpmyadmin_log }}
