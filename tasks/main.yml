@@ -1,11 +1,57 @@
 ---
-- name: fail2ban installed
-  apt:
-    pkg: fail2ban
-    state: present
-  register: fail2ban_present
+- name: Check /etc/debian_version
+  shell: "lsb_release -c | awk '{ print $2 }'"
+  register: fail2ban_debian_version_check
+  check_mode: false
+  changed_when: false
   tags:
     - fail2ban
+
+- name: Set a fact for the Debian version
+  set_fact:
+    fail2ban_debian_version: "{{ users_debian_version_check.stdout }}"
+  tags:
+    - fail2ban
+
+- name: Install packages for Debian Stretch
+  apt:
+    pkg:
+      - iptables
+      - iptables-persistent
+      - whois
+      - python3-pyinotify
+      - fail2ban 
+  when: fail2ban_debian_version == "stretch"
+  tags:
+    - fail2ban
+
+- name: Enable iptables-legacy for Buster
+  block:
+
+    - name: Install packages for Debian Buster
+      apt:
+        pkg:
+          - iptables
+          - iptables-persistent
+          - nftables
+          - netfilter-persistent 
+          - whois
+          - python3-pyinotify
+          - fail2ban 
+      tags:
+        - fail2ban
+
+    - name: Enable iptables-legacy for ipv4
+      command: update-alternatives --set iptables /usr/sbin/iptables-nft
+      tags:
+        - fail2ban
+
+    - name: Enable iptables-legacy for ipv6
+      command: update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
+      tags:
+        - fail2ban
+
+  when: fail2ban_debian_version == "buster"
 
 - name: fail2ban filters in place
   copy:
