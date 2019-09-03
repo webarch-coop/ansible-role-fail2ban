@@ -9,7 +9,7 @@
 
 - name: Set a fact for the Debian version
   set_fact:
-    fail2ban_debian_version: "{{ users_debian_version_check.stdout }}"
+    fail2ban_debian_version: "{{ fail2ban_debian_version_check.stdout }}"
   tags:
     - fail2ban
 
