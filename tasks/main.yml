@@ -20,7 +20,7 @@
       - iptables-persistent
       - whois
       - python3-pyinotify
-      - fail2ban 
+      - fail2ban
   when: fail2ban_debian_version == "stretch"
   tags:
     - fail2ban
@@ -34,10 +34,10 @@
           - iptables
           - iptables-persistent
           - nftables
-          - netfilter-persistent 
+          - netfilter-persistent
           - whois
           - python3-pyinotify
-          - fail2ban 
+          - fail2ban
       tags:
         - fail2ban
 
