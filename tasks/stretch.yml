@@ -1,0 +1,27 @@
+---
+- name: Install packages for Debian Stretch
+  apt:
+    pkg:
+      - iptables
+      - iptables-persistent
+      - whois
+      - python3-pyinotify
+      - fail2ban
+  when: fail2ban_debian_version == "stretch"
+  tags:
+    - fail2ban
+
+- name: fail2ban filters in place
+  copy:
+    src: files/filter.d/
+    dest: /etc/fail2ban/filter.d/
+  tags:
+    - fail2ban
+
+- name: fail2ban jail.local in place
+  template:
+    src: templates/jail.local.stretch.j2
+    dest: /etc/fail2ban/jail.local
+  tags:
+    - fail2ban
+...

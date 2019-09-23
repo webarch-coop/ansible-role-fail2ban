@@ -13,20 +13,13 @@
   tags:
     - fail2ban
 
-- name: Install packages for Debian Stretch
-  apt:
-    pkg:
-      - iptables
-      - iptables-persistent
-      - whois
-      - python3-pyinotify
-      - fail2ban
-  register: fail2ban_present
+- name: Include tasks for Debian Stretch
+  include_tasks: stretch.yml
   when: fail2ban_debian_version == "stretch"
   tags:
     - fail2ban
 
-- name: Enable iptables-legacy for Buster
+- name: Debian Buster
   block:
 
     - name: Install packages for Debian Buster
@@ -39,7 +32,18 @@
           - whois
           - python3-pyinotify
           - fail2ban
-      register: fail2ban_present
+      tags:
+        - fail2ban
+
+    - name: Filters in place
+      copy:
+        src: "files/filter.d/{{ file }}.conf"
+        dest: "/etc/fail2ban/filter.d/{{ file }}.conf"
+      loop:
+        - wordpress-hard 
+        - wordpress-soft
+      loop_control:
+        loop_var: file
       tags:
         - fail2ban
 
@@ -55,23 +59,14 @@
       tags:
         - fail2ban
 
+    - name: fail2ban jail.local in place
+      template:
+        src: templates/jail.local.j2
+        dest: /etc/fail2ban/jail.local
+      tags:
+        - fail2ban
+
   when: fail2ban_debian_version == "buster"
-
-- name: fail2ban filters in place
-  copy:
-    src: files/filter.d/
-    dest: /etc/fail2ban/filter.d/
-  register: fail2ban_filters
-  tags:
-    - fail2ban
-
-- name: fail2ban jail.local in place
-  template:
-    src: templates/jail.local.j2
-    dest: /etc/fail2ban/jail.local
-  register: fail2ban_jail_local
-  tags:
-    - fail2ban
 
 - name: fail2ban restarted
   service:
@@ -80,3 +75,4 @@
   when: fail2ban_present.changed or fail2ban_filters.changed or fail2ban_jail_local.changed
   tags:
     - fail2ban
+...

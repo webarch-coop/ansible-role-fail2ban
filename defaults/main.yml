@@ -6,9 +6,9 @@ fail2ban_ssh: true
 fail2ban_wordpress: true
 # https://www.drupal.org/project/fail2ban
 fail2ban_drupal: true
-fail2ban_drupal_comment: false
-# 
-
-# For Debian Stretch and earlier package use /var/log/apache2/phpmyadmin_access.log
-#fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
+# phpMyAdmin installed using https://git.coop/webarch/phpmyamdin 
+# logs to /var/log/auth.log
+fail2ban_phpmyadmin: true
+# Debian Stretch logs to /var/log/apache2/phpmyadmin_access.log
+fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
 ...
