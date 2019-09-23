@@ -40,7 +40,7 @@
         src: "files/filter.d/{{ file }}.conf"
         dest: "/etc/fail2ban/filter.d/{{ file }}.conf"
       loop:
-        - wordpress-hard 
+        - wordpress-hard
         - wordpress-soft
       loop_control:
         loop_var: file
@@ -72,7 +72,6 @@
   service:
     name: fail2ban
     state: restarted
-  when: fail2ban_present.changed or fail2ban_filters.changed or fail2ban_jail_local.changed
   tags:
     - fail2ban
 ...
