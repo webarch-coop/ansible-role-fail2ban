@@ -8,10 +8,14 @@ banaction = iptables-multiport
 logpath   = /var/log/auth.log
 
 # JAILS
+
+{% if fail2ban_ssh == True %}
 [sshd]
 enabled   = true
 maxretry  = 5
+{% endif %}
 
+{% if fail2ban_wordpress == True %}
 # https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html 
 [wordpress-hard]
 enabled = true
@@ -26,26 +30,37 @@ filter = wordpress-soft
 logpath = /var/log/auth.log
 maxretry = 3
 port = http,https
+{% endif %}
 
+{% if fail2ban_drupal == True %}
 # https://www.drupal.org/project/fail2ban
-#[drupal-comment]
-#enabled  = false
-#filter   = drupal-comment
-#port     = http,https
-#maxretry = 0
 
-# https://www.drupal.org/project/fail2ban
+{% if fail2ban_drupal_comment == True %}
+[drupal-comment]
+enabled  = true
+filter   = drupal-comment
+port     = http,https
+maxretry = 0
+{% endif %}
+
 [drupal-auth]
 enabled = true
 filter  = drupal-auth
 port    = http,https
 maxretry = 5
 logpath = /var/log/messages
+{% endif %}
 
-# https://www.phryneas.de/fail2ban-phpmyadmin/
+{% if fail2ban_phpmyadmin == True %}
+
+{% if fail2ban_phpmyadmin_syslog == False %}
+# Debian Stretch and earlier
 [phpmyadmin]
 enabled = true
 port = http,https
 filter = phpmyadmin
 maxretry = 5
 logpath = {{ fail2ban_phpmyadmin_log }}
+{% endif %}
+
+# vim: set ft=dosini
