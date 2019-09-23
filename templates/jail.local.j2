@@ -52,7 +52,6 @@ logpath = /var/log/messages
 {% endif %}
 
 {% if fail2ban_phpmyadmin == True %}
-
 {% if fail2ban_phpmyadmin_syslog == False %}
 # Debian Stretch and earlier
 [phpmyadmin]
@@ -61,6 +60,7 @@ port = http,https
 filter = phpmyadmin
 maxretry = 5
 logpath = {{ fail2ban_phpmyadmin_log }}
+{% endif %}
 {% endif %}
 
 # vim: set ft=dosini

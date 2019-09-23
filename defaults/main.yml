@@ -1,6 +1,14 @@
 ---
 # Space seperated ip addresses and / or subnets
 fail2ban_whitelist: "81.95.52.0/24"
+fail2ban_ssh: true
+# https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html
+fail2ban_wordpress: true
+# https://www.drupal.org/project/fail2ban
+fail2ban_drupal: true
+fail2ban_drupal_comment: false
+# 
+
 # For Debian Stretch and earlier package use /var/log/apache2/phpmyadmin_access.log
-fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
+#fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
 ...
