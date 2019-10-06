@@ -1,6 +1,7 @@
 ---
 # Array of IP addresses and / or subnets
 fail2ban_whitelist:
+  - "127.0.0.1"
   - "81.95.52.0/24"
 fail2ban_ssh: true
 # https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html
