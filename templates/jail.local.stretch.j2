@@ -2,7 +2,7 @@
 # See http://www.pontikis.net/blog/fail2ban-install-config-debian-wheezy
 
 [DEFAULT]
-ignoreip  = 127.0.0.1 {{ fail2ban_whitelist }}
+ignoreip  = 127.0.0.1 {% for ip in fail2ban_whitelist %}{{ ip }}{% if not loop.last %} {% endif %}{% endfor %}
 bantime   = 86400
 #destemail = root@localhost 
 banaction = iptables-multiport

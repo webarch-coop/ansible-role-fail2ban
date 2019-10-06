@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 [DEFAULT]
-ignoreip  = 127.0.0.1 {{ fail2ban_whitelist }}
+ignoreip  = 127.0.0.1 {% for ip in fail2ban_whitelist %}{{ ip }}{% if not loop.last %} {% endif %}{% endfor %}
 bantime   = 86400
 banaction = iptables-multiport
 logpath   = /var/log/auth.log
