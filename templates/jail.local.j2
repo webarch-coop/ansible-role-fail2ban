@@ -4,6 +4,7 @@
 {% if fail2ban_whitelist is defined %}
 ignoreip  = {% for ip in fail2ban_whitelist %}{{ ip }}{% if not loop.last %} {% endif %}{% endfor %}
 {% endif %}
+
 bantime   = 86400
 banaction = iptables-multiport
 logpath   = /var/log/auth.log
