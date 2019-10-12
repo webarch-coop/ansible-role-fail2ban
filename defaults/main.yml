@@ -1,4 +1,6 @@
 ---
+# Default time to ban IP addresses for
+fail2ban_bantime: 86400
 # Array of IP addresses and / or subnets
 fail2ban_whitelist:
   - "127.0.0.1"
