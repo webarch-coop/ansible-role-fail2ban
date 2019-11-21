@@ -7,7 +7,6 @@
       - whois
       - python3-pyinotify
       - fail2ban
-  when: fail2ban_debian_version == "stretch"
   tags:
     - fail2ban
 

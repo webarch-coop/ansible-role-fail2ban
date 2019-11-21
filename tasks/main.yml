@@ -1,21 +1,7 @@
 ---
-- name: Check /etc/debian_version
-  shell: "lsb_release -c | awk '{ print $2 }'"
-  register: fail2ban_debian_version_check
-  check_mode: false
-  changed_when: false
-  tags:
-    - fail2ban
-
-- name: Set a fact for the Debian version
-  set_fact:
-    fail2ban_debian_version: "{{ fail2ban_debian_version_check.stdout }}"
-  tags:
-    - fail2ban
-
 - name: Include tasks for Debian Stretch
   include_tasks: stretch.yml
-  when: fail2ban_debian_version == "stretch"
+  when: ansible_distribution_release == "stretch"
   tags:
     - fail2ban
 
@@ -66,7 +52,7 @@
       tags:
         - fail2ban
 
-  when: fail2ban_debian_version == "buster"
+  when: ansible_distribution_release == "buster"
 
 - name: fail2ban restarted
   service:
