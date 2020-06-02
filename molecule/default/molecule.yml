@@ -5,22 +5,29 @@ dependency:
 driver:
   name: docker
 
-lint:
-  name: yamllint
+lint: |
+  set -e
+  yamllint -c .yamllint .
+  ansible-lint -c .ansible-lint.yml .
 
 platforms:
-  - name: instance
-    image: registry.git.coop/webarch/containers/images/ansible:0.2
+  - name: stretch-instance
+    image: geerlingguy/docker-debian9-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    privileged: true
+    pre_build_image: true
+  - name: buster-instance
+    image: geerlingguy/docker-debian10-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    privileged: true
     pre_build_image: true
 
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-
-scenario:
-  name: default
-  test_sequence:
-    - lint
-    - idempotence
 ...

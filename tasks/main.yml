@@ -60,4 +60,5 @@
     state: restarted
   tags:
     - fail2ban
+    - molecule-idempotence-notest
 ...
