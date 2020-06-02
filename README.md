@@ -1,5 +1,7 @@
 # Ansible Debian Fail2ban Role 
 
+[![pipeline status](https://git.coop/webarch/fail2ban/badges/master/pipeline.svg)](https://git.coop/webarch/fail2ban/-/commits/master)
+
 This repository contains an Ansible role for installing [Fail2ban](https://fail2ban.org/) on Debian servers and configuring it to allow applications to send outgoing email nbut not accept incomming email.
 
 To use this role you need to use Ansible Galaxy to install it into another repository under `galaxy/roles/fail2ban` by adding a `requirements.yml` file in that repo that contains:

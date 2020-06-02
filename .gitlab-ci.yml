@@ -1,7 +1,7 @@
 ---
-image: registry.git.coop/webarch/containers/images/ansible:0.2
+image: registry.git.coop/webarch/containers/images/ci:0.2.0
 
-ansible-lint:
+test:
   script:
-    - molecule lint
+    - molecule test
 ...
