@@ -12,7 +12,7 @@ lint: |
 
 platforms:
   - name: stretch-instance
-    image: geerlingguy/docker-debian9-ansible:latest
+    image: registry.git.coop/webarch/containers/images/debian:stretch
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -20,7 +20,7 @@ platforms:
     privileged: true
     pre_build_image: true
   - name: buster-instance
-    image: geerlingguy/docker-debian10-ansible:latest
+    image: registry.git.coop/webarch/containers/images/debian:buster
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -30,4 +30,3 @@ platforms:
 
 provisioner:
   name: ansible
-...
