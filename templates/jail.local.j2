@@ -12,6 +12,7 @@ logpath   = /var/log/auth.log
 {% if fail2ban_ssh == True %}
 [sshd]
 enabled = true
+port = {{ fail2ban_ssh_port }}
 {% endif %}
 
 {% if fail2ban_wordpress == True %}

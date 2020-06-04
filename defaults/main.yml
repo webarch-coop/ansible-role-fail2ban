@@ -6,6 +6,7 @@ fail2ban_whitelist:
   - "127.0.0.1"
   - "81.95.52.0/24"
 fail2ban_ssh: true
+fail2ban_ssh_port: 22
 # https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html
 fail2ban_wordpress: true
 # https://www.drupal.org/project/fail2ban
