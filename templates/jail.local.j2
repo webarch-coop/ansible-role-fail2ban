@@ -42,4 +42,15 @@ enabled = true
 enabled = true
 {% endif %}
 
+{% if fail2ban_nginx == True %}
+[nginx-botsearch]
+enabled = true
+
+[nginx-http-auth]
+enabled = true
+
+[nginx-limit-req]
+enabled = true
+{% endif %}
+
 # vim: set ft=dosini

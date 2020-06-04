@@ -17,4 +17,5 @@ fail2ban_drupal_comment: true
 fail2ban_phpmyadmin: true
 # Debian Stretch logs to /var/log/apache2/phpmyadmin_access.log
 fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
+fail2ban_nginx: false
 ...
