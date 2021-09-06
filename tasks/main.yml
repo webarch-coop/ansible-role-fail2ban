@@ -5,10 +5,10 @@
   tags:
     - fail2ban
 
-- name: Debian Buster
+- name: Debian Bullseye and Buster
   block:
 
-    - name: Install packages for Debian Buster
+    - name: Install packages for Debian Bullseye and Buster
       apt:
         pkg:
           - iptables
@@ -18,8 +18,6 @@
           - whois
           - python3-pyinotify
           - fail2ban
-      tags:
-        - fail2ban
 
     - name: Filters in place
       copy:
@@ -30,29 +28,23 @@
         - wordpress-soft
       loop_control:
         loop_var: file
-      tags:
-        - fail2ban
 
     - name: Enable iptables-legacy for ipv4
       command: update-alternatives --set iptables /usr/sbin/iptables-nft
       changed_when: false
-      tags:
-        - fail2ban
 
     - name: Enable iptables-legacy for ipv6
       command: update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
       changed_when: false
-      tags:
-        - fail2ban
 
     - name: fail2ban jail.local in place
       template:
         src: templates/jail.local.j2
         dest: /etc/fail2ban/jail.local
-      tags:
-        - fail2ban
 
-  when: ansible_distribution_release == "buster"
+  when: ansible_distribution_release != "stretch"
+  tags:
+    - fail2ban
 
 - name: fail2ban restarted
   service:
