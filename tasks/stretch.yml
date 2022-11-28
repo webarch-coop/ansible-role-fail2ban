@@ -14,6 +14,7 @@
   copy:
     src: files/filter.d/
     dest: /etc/fail2ban/filter.d/
+    mode: 0644
   tags:
     - fail2ban
 
@@ -21,6 +22,7 @@
   template:
     src: templates/jail.local.stretch.j2
     dest: /etc/fail2ban/jail.local
+    mode: 0644
   tags:
     - fail2ban
 ...

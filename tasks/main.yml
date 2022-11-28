@@ -23,6 +23,7 @@
       copy:
         src: "files/filter.d/{{ file }}.conf"
         dest: "/etc/fail2ban/filter.d/{{ file }}.conf"
+        mode: 0644
       loop:
         - wordpress-hard
         - wordpress-soft
@@ -41,6 +42,7 @@
       template:
         src: templates/jail.local.j2
         dest: /etc/fail2ban/jail.local
+        mode: 0644
 
   when: ansible_distribution_release != "stretch"
   tags:
