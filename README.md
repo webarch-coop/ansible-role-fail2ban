@@ -1,4 +1,4 @@
-# Webarchitects fail2ban Ansible role
+# Webarchitects Fail2ban Ansible role
 
 [![pipeline status](https://git.coop/webarch/fail2ban/badges/master/pipeline.svg)](https://git.coop/webarch/fail2ban/-/commits/master)
 
@@ -6,7 +6,9 @@ This repository contains an Ansible role for installing [Fail2ban](https://fail2
 
 ## Usage
 
-The [alternatives role](https://git.coop/webarch/alternatives) can be used to set priority for `iptables` or these cammands can be run manually:
+By default this role installs `fail2ban` and `iptables` and creates a `/etc/fail2ban/jail.local` file.
+
+The [alternatives role](https://git.coop/webarch/alternatives) can be used to set the priority for `iptables` or these commands can be run manually:
 
 ```bash
 update-alternatives --set iptables /usr/sbin/iptables-nft
@@ -19,7 +21,7 @@ See the [defaults/main.yml](defaults/main.yml) file for the default variables, t
 
 ### fail2ban
 
-Set the `fail2ban` variable to `true` run the tasks in this role, it defaults to `false`.
+Set the `fail2ban` variable to `true` to run the tasks in this role, it defaults to `false`.
 
 ### fail2ban_filters
 
@@ -41,13 +43,13 @@ fail2ban_config_files:
 
 #### conf
 
-A dictionary representing the sections, variables and values that should be present in the INI file in YAML format, [jc]](https://github.com/kellyjonbrazil/jc) version >= [1.22.5](https://github.com/kellyjonbrazil/jc/releases/tag/v1.22.5) can be used to convert files into YAML format, for example:
+A dictionary representing the sections, variables and values that should be present in the INI file in YAML format, [jc](https://github.com/kellyjonbrazil/jc) version >= [1.22.5](https://github.com/kellyjonbrazil/jc/releases/tag/v1.22.5) can be used to convert files into YAML format, for example:
 
 ```bash
 cat /etc/fail2ban/jail.conf | jc --ini -yp
 ```
 
-Note that currently this role doesn't have the ability to omit variables from conf files, only add and amend them.
+Note that currently this role doesn't have the ability to omit variables from conf files, it can only add and amend them.
 
 #### name
 
@@ -63,7 +65,7 @@ A required state for the configuration file, `absent` or `present`.
 
 ### fail2ban_pkgs
 
-A list of `.deb` packages that should be persent.
+A list of `.deb` packages that should be present.
 
 ### fail2ban_whitelist
 
