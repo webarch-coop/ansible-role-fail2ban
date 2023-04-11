@@ -1,0 +1,69 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+argument_specs:
+  main:
+    author: Chris Croome
+    description: An Ansible role for installing Fai2ban on Debian.
+    short_description: The main entry point for the Fail2ban role.
+    options:
+      fail2ban:
+        type: bool
+        required: true
+        description: Run the tasks in this role.
+      fail2ban_backup_extension:
+        type: str
+        required: true
+        description: File extension for backup files.
+      fail2ban_config_files:
+        type: list
+        elements: dict
+        required: true
+        description: The Fail2ban configuration files.
+        options:
+          conf:
+            type: dict
+            required: false
+            description: The content for the configuration files.
+          name:
+            type: str
+            required: false
+            description: The name of the configuration file.
+          path:
+            type: str
+            required: true
+            description: The path of the configuration file.
+          state:
+            type: str
+            required: true
+            description: The state of the configuratiuon file.
+            choices:
+              - absent
+              - present
+      fail2ban_filters:
+        type: list
+        elements: str
+        required: true
+        description: A list of Fail2ban filters that should be present.
+      fail2ban_pkgs:
+        type: list
+        elements: str
+        required: true
+        description: A list of .deb packages that should be present.
+      fail2ban_whitelist:
+        type: list
+        elements: str
+        required: true
+        description: A list of IP address to whitelist.
+      fail2ban_validate:
+        type: bool
+        required: true
+        description: Vaildate all variables that start with fail2ban_.
+...

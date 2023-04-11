@@ -1,21 +1,46 @@
 ---
-# Default time to ban IP addresses for
-fail2ban_bantime: 86400
-# Array of IP addresses and / or subnets
+fail2ban: false
+fail2ban_filters:
+  - wordpress-hard
+  - wordpress-soft
+fail2ban_config_files:
+  - name: Local jail
+    path: /etc/fail2ban/jail.local
+    state: present
+    conf:
+      DEFAULT:
+        ignoreip: "{% for fail2ban_ip in fail2ban_whitelist %}{{ fail2ban_ip }}{% if not loop.last %} {% endif %}{% endfor %}"
+        bantime: 86400
+        banaction: iptables-multiport
+        logpath: /var/log/auth.log
+      sshd:
+        enabled: true
+        port: 22
+      wordpress-hard:
+        enabled: true
+        filter: wordpress-hard
+        logpath: /var/log/auth.log
+        maxretry: 1
+        port: http,https
+      wordpress-soft:
+        enabled: true
+        filter: wordpress-soft
+        logpath: /var/log/auth.log
+        maxretry: 3
+        port: http,https
+      phpmyadmin-syslog:
+        enabled: true
+fail2ban_backup_extension: "{{ '%Y%m%d_%H%M%S' | ansible.builtin.strftime }}.bak"
+fail2ban_pkgs:
+  - fail2ban
+  - iptables
+  - iptables-persistent
+  - netfilter-persistent
+  - nftables
+  - python3-pyinotify
+  - whois
 fail2ban_whitelist:
   - "127.0.0.1"
   - "81.95.52.0/24"
-fail2ban_ssh: true
-fail2ban_ssh_port: 22
-# https://docs.wp-fail2ban.com/en/4.2/configuration/fail2ban.html
-fail2ban_wordpress: true
-# https://www.drupal.org/project/fail2ban
-fail2ban_drupal: true
-fail2ban_drupal_comment: true
-# phpMyAdmin installed using https://git.coop/webarch/phpmyadmin
-# logs to /var/log/auth.log
-fail2ban_phpmyadmin: true
-# Debian Stretch logs to /var/log/apache2/phpmyadmin_access.log
-fail2ban_phpmyadmin_log: /var/log/apache2/phpmyadmin_access.log
-fail2ban_nginx: false
+fail2ban_validate: true
 ...

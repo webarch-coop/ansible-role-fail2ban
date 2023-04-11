@@ -1,0 +1,94 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Fail2ban configuration file
+  block:
+
+    - name: Check if the file exists
+      ansible.builtin.stat:
+        path: "{{ fail2ban_config_file.path }}"
+      register: fail2ban_config_file_path
+
+    - name: Delete the file
+      ansible.builtin.command: "mv {{ fail2ban_config_file.path }} {{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
+      args:
+        creates: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
+      when:
+        - fail2ban_config_file_path.stat.exists | bool
+        - fail2ban_config_file.state == "absent"
+
+    - name: Read the file
+      block:
+
+        - name: Slurp the file
+          ansible.builtin.slurp:
+            path: "{{ fail2ban_config_file.path }}"
+          register: fail2ban_config_file_b64encoded
+
+        - name: Decode the base64 encoded version of the file and set a variable
+          ansible.builtin.set_fact:
+            fail2ban_config_file_existing: "{{ fail2ban_config_file_b64encoded['content'] | ansible.builtin.b64decode | community.general.jc('ini') }}"
+
+        - name: Debug existing file variables
+          ansible.builtin.debug:
+            var: fail2ban_config_file_existing
+
+      when: fail2ban_config_file_path.stat.exists | bool
+
+    - name: Create or edit the file
+      block:
+
+        - name: Backup present
+          ansible.builtin.copy:
+            src: "{{ fail2ban_config_file.path }}"
+            dest: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
+            remote_src: true
+            mode: "0644"
+            owner: root
+            group: root
+          changed_when: false
+
+        - name: Include the file section edited tasks
+          ansible.builtin.include_tasks: conf_file_section.yml
+          loop: "{{ fail2ban_config_file.conf | dict2items }}"
+          loop_control:
+            loop_var: fail2ban_config_file_section
+          when: fail2ban_config_file.conf.keys() | length != 0
+
+        - name: Ansible managed comment present at the top of the file
+          ansible.builtin.lineinfile:
+            path: "{{ fail2ban_config_file.path }}"
+            line: "# Ansible managed"
+            state: present
+            insertbefore: BOF
+            mode: "0644"
+            owner: root
+            group: root
+
+        - name: Vim syntaxhighlighting modeline present at the end of the file
+          ansible.builtin.lineinfile:
+            path: "{{ fail2ban_config_file.path }}"
+            line: "# vim: syntax=dosini"
+            state: present
+            insertafter: EOF
+            mode: "0644"
+            owner: root
+            group: root
+
+      when: >-
+        ( ( not fail2ban_config_file_path.stat.exists | bool ) and
+        ( fail2ban_config_file.state == "present" ) ) or
+        ( ( fail2ban_config_file.state == "present" ) and
+        ( fail2ban_config_file_existing is defined ) and
+        ( fail2ban_config_file_existing != fail2ban_config_file.conf ) )
+
+  tags:
+    - fail2ban
+...

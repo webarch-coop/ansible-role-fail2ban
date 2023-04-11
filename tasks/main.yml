@@ -1,58 +1,44 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Include tasks for Debian Stretch
-  include_tasks: stretch.yml
-  when: ansible_distribution_release == "stretch"
-  tags:
-    - fail2ban
-
-- name: Debian Bullseye and Buster
+- name: Fail2ban
   block:
 
-    - name: Install packages for Debian Bullseye and Buster
-      apt:
-        pkg:
-          - iptables
-          - iptables-persistent
-          - nftables
-          - netfilter-persistent
-          - whois
-          - python3-pyinotify
-          - fail2ban
+    - name: Validate Fail2ban variables
+      ansible.builtin.include_tasks: validate.yml
+      when: fail2ban_validate | bool
+
+    - name: Packages present
+      ansible.builtin.apt:
+        pkg: "{{ fail2ban_pkgs }}"
+        state: present
 
     - name: Filters in place
-      copy:
-        src: "files/filter.d/{{ file }}.conf"
-        dest: "/etc/fail2ban/filter.d/{{ file }}.conf"
-        mode: 0644
-      loop:
-        - wordpress-hard
-        - wordpress-soft
+      ansible.builtin.copy:
+        src: "files/filter.d/{{ fail2ban_filter }}.conf"
+        dest: "/etc/fail2ban/filter.d/{{ fail2ban_filter }}.conf"
+        mode: "0644"
+      loop: "{{ fail2ban_filters }}"
       loop_control:
-        loop_var: file
+        loop_var: fail2ban_filter
 
-    - name: Enable iptables-legacy for ipv4
-      command: update-alternatives --set iptables /usr/sbin/iptables-nft
-      changed_when: false
+    - name: Configure Fail2ban
+      ansible.builtin.include_tasks: conf_file.yml
+      loop: "{{ fail2ban_config_files }}"
+      loop_control:
+        loop_var: fail2ban_config_file
+        label: "{{ fail2ban_config_file.path }}"
 
-    - name: Enable iptables-legacy for ipv6
-      command: update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
-      changed_when: false
+    # TODO config test when files have changed
 
-    - name: fail2ban jail.local in place
-      template:
-        src: templates/jail.local.j2
-        dest: /etc/fail2ban/jail.local
-        mode: 0644
-
-  when: ansible_distribution_release != "stretch"
+  when: fail2ban | bool
   tags:
     - fail2ban
-
-- name: fail2ban restarted
-  service:
-    name: fail2ban
-    state: restarted
-  tags:
-    - fail2ban
-    - molecule-idempotence-notest
 ...
