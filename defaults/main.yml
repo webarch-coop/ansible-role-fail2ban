@@ -10,12 +10,12 @@ fail2ban_config_files:
     conf:
       DEFAULT:
         ignoreip: "{% for fail2ban_ip in fail2ban_whitelist %}{{ fail2ban_ip }}{% if not loop.last %} {% endif %}{% endfor %}"
-        bantime: 86400
+        bantime: 3600
         banaction: iptables-multiport
         logpath: /var/log/auth.log
       sshd:
         enabled: true
-        port: 22
+        bantime: 86400
       wordpress-hard:
         enabled: true
         filter: wordpress-hard
