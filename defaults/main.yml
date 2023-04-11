@@ -19,26 +19,12 @@ fail2ban_config_files:
     conf:
       DEFAULT:
         ignoreip: "{% for fail2ban_ip in fail2ban_whitelist %}{{ fail2ban_ip }}{% if not loop.last %} {% endif %}{% endfor %}"
-        bantime: 3600
+        bantime: 86400
         banaction: iptables-multiport
         logpath: /var/log/auth.log
       sshd:
         enabled: true
         bantime: 86400
-      wordpress-hard:
-        enabled: true
-        filter: wordpress-hard
-        logpath: /var/log/auth.log
-        maxretry: 1
-        port: http,https
-      wordpress-soft:
-        enabled: true
-        filter: wordpress-soft
-        logpath: /var/log/auth.log
-        maxretry: 3
-        port: http,https
-      phpmyadmin-syslog:
-        enabled: true
 fail2ban_pkgs:
   - fail2ban
   - iptables
@@ -49,6 +35,5 @@ fail2ban_pkgs:
   - whois
 fail2ban_whitelist:
   - "127.0.0.1"
-  - "81.95.52.0/24"
 fail2ban_validate: true
 ...
