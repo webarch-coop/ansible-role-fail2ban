@@ -19,6 +19,7 @@
       ansible.builtin.apt:
         pkg: "{{ fail2ban_pkgs }}"
         state: present
+      notify: Restart fail2ban
 
     - name: Filters in place
       ansible.builtin.copy:
@@ -28,7 +29,7 @@
       loop: "{{ fail2ban_filters }}"
       loop_control:
         loop_var: fail2ban_filter
-      register: fail2ban_filters_present
+      notify: Restart fail2ban
 
     - name: Configure Fail2ban
       ansible.builtin.include_tasks: conf_file.yml
@@ -36,17 +37,6 @@
       loop_control:
         loop_var: fail2ban_config_file
         label: "{{ fail2ban_config_file.path }}"
-
-    - name: Test configuration when configuration has changed
-      ansible.builtin.command: fail2ban-client -t
-      check_mode: false
-      changed_when: true
-      notify: Restart fail2ban
-      when: >-
-        ( ( fail2ban_filters_present.changed is defined ) and
-        ( fail2ban_filters_present.changed | bool ) ) or
-        ( ( fail2ban_config_file_changed is defined ) and
-        ( fail2ban_config_file_changed | bool ) )
 
   when: fail2ban | bool
   tags:

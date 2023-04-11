@@ -18,10 +18,10 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role.
-      fail2ban_backup_extension:
-        type: str
-        required: true
-        description: File extension for backup files.
+      fail2ban_config_file_changed:
+        type: bool
+        required: false
+        description: Internal variable used to track changes to config files.
       fail2ban_config_files:
         type: list
         elements: dict

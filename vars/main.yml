@@ -11,4 +11,7 @@
 # https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
 fail2banvarnames: "{{ q('varnames', '^fail2ban_') | sort }}"
 fail2banhostvars: "{{ dict(fail2banvarnames | list | zip(q('vars', *fail2banvarnames))) }}"
+
+# Updated to true if the config file has changed
+fail2ban_config_file_changed: false
 ...

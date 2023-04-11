@@ -11,6 +11,10 @@
 - name: Fail2ban configuration file
   block:
 
+    - name: Set a fact for the backup file extension
+      ansible.builtin.set_fact:
+        fail2ban_backup_extension: "{{ '%Y%m%d_%H%M%S' | ansible.builtin.strftime }}.bak"
+
     - name: Check if the file exists
       ansible.builtin.stat:
         path: "{{ fail2ban_config_file.path }}"
@@ -60,6 +64,7 @@
           loop: "{{ fail2ban_config_file.conf | dict2items }}"
           loop_control:
             loop_var: fail2ban_config_file_section
+            label: "{{ fail2ban_config_file_section.key }}"
           when: fail2ban_config_file.conf.keys() | length != 0
 
         - name: Ansible managed comment present at the top of the file
@@ -72,6 +77,19 @@
             owner: root
             group: root
 
+        - name: Name present at the top of the file
+          ansible.builtin.lineinfile:
+            path: "{{ fail2ban_config_file.path }}"
+            line: "# {{ fail2ban_config_file.name }}"
+            state: present
+            insertafter: "# Ansible managed"
+            mode: "0644"
+            owner: root
+            group: root
+          when:
+            - fail2ban_config_file.name is defined
+            - fail2ban_config_file.name | length > 0
+
         - name: Vim syntaxhighlighting modeline present at the end of the file
           ansible.builtin.lineinfile:
             path: "{{ fail2ban_config_file.path }}"
@@ -81,6 +99,24 @@
             mode: "0644"
             owner: root
             group: root
+
+        - name: Test configuration when changed
+          ansible.builtin.command: fail2ban-client -t
+          check_mode: false
+          changed_when: true
+          notify: Restart fail2ban
+          when:
+            - fail2ban_config_file_changed is defined
+            - fail2ban_config_file_changed | bool
+
+        - name: Backup absent when the file is unchanged
+          ansible.builtin.file:
+            path: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
+            state: absent
+          changed_when: false
+          when: >-
+            ( fail2ban_config_file_changed is not defined ) or
+            ( not fail2ban_config_file_changed | bool )
 
       when: >-
         ( ( not fail2ban_config_file_path.stat.exists | bool ) and
