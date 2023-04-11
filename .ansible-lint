@@ -1,10 +1,6 @@
 ---
 # https://docs.ansible.com/ansible-lint/rules/default_rules.html
 skip_list:
-  - fqcn-builtins
   - key-order[task]
-  - name[casing]
-  - name[template]
-  - schema[meta]
 # vim: syntax=yaml
 ...
