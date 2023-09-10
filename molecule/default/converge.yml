@@ -11,17 +11,17 @@
 - name: Run as root
   # become: true
   connection: local
-  # gather_facts: true 
+  # gather_facts: true
   hosts:
     - localhost
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-  
+
     - name: Debug ansible_effective_user_id
       ansible.builtin.debug:
         var: ansible_effective_user_id
-  
+
     - name: Debug ansible_user_id
       ansible.builtin.debug:
         var: ansible_user_id
@@ -29,10 +29,18 @@
     - name: Debug ansible_user_dir
       ansible.builtin.debug:
         var: ansible_user_dir
-  
+
+    - name: Touch /var/log/auth.log
+      ansible.builtin.file:
+        path: /var/log/auth.log
+        state: touch
+        mode: "0644"
+        owner: root
+        group: root
+
     - name: Include role as root
       ansible.builtin.include_role:
-        name: fail2ban
+        name: "{{ lookup('ansible.builtin.env', 'CI_PROJECT_NAME') }}"
       vars:  # noqa var-naming[no-role-prefix]
         fail2ban: true
 ...
