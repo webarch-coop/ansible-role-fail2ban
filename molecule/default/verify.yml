@@ -30,11 +30,11 @@
         molecule_systemctl_loaded: "{{ molecule_systemctl_status.stdout_lines | select('regex', '^     Loaded: ') | map('regex_replace', '^     Loaded: ') | first }}"
 
     - name: Debug systemctl active status
-      ansible.builtion.debug:
+      ansible.builtin.debug:
         var: molecule_systemctl_active
 
     - name: Debug systemctl loaded status
-      ansible.builtion.debug:
+      ansible.builtin.debug:
         var: molecule_systemctl_loaded
 
     - name: Check that the service is active and loaded
