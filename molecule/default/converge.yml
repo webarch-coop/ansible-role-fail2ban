@@ -35,4 +35,8 @@
         name: "{{ lookup('ansible.builtin.env', 'CI_PROJECT_NAME') }}"
       vars:  # noqa var-naming[no-role-prefix]
         fail2ban: true
+        fail2ban_pkgs:
+          - fail2ban
+          - ufw
+          - whois
 ...
