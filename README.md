@@ -2,13 +2,13 @@
 
 [![pipeline status](https://git.coop/webarch/fail2ban/badges/master/pipeline.svg)](https://git.coop/webarch/fail2ban/-/commits/master)
 
-This repository contains an Ansible role for installing [Fail2ban](https://fail2ban.org/) on Debian.
+This repository contains an Ansible role for installing [Fail2ban](https://fail2ban.org/) on Debian and Ubuntu.
 
 ## Usage
 
 By default this role installs `fail2ban` and creates a `/etc/fail2ban/jail.local` file.
 
-You might want to install `iptables`, `nftables` or `ufw` prious to running this role.
+You might want to install `iptables`, `nftables` or `ufw` prior to running this role.
 
 The [alternatives role](https://git.coop/webarch/alternatives) can be used to set the priority for `iptables` or these commands can be run manually:
 
