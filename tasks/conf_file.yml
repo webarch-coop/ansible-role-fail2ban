@@ -20,7 +20,7 @@
         path: "{{ fail2ban_config_file.path }}"
       register: fail2ban_config_file_path
 
-    - name: Delete the file
+    - name: Delete the file, creating a backup
       ansible.builtin.command: "mv {{ fail2ban_config_file.path }} {{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
       args:
         creates: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
@@ -72,6 +72,7 @@
             path: "{{ fail2ban_config_file.path }}"
             line: "# Ansible managed"
             state: present
+            create: true
             insertbefore: BOF
             mode: "0644"
             owner: root
@@ -82,6 +83,7 @@
             path: "{{ fail2ban_config_file.path }}"
             line: "# {{ fail2ban_config_file.name }}"
             state: present
+            create: true
             insertafter: "# Ansible managed"
             mode: "0644"
             owner: root
@@ -90,11 +92,21 @@
             - fail2ban_config_file.name is defined
             - fail2ban_config_file.name | length > 0
 
+        - name: Old Vim syntaxhighlighting modeline absent
+          ansible.builtin.lineinfile:
+            path: "{{ fail2ban_config_file.path }}"
+            line: "# vim: set ft=dosini"
+            state: absent
+            mode: "0644"
+            owner: root
+            group: root
+
         - name: Vim syntaxhighlighting modeline present at the end of the file
           ansible.builtin.lineinfile:
             path: "{{ fail2ban_config_file.path }}"
             line: "# vim: syntax=dosini"
             state: present
+            create: true
             insertafter: EOF
             mode: "0644"
             owner: root
@@ -109,19 +121,25 @@
             - fail2ban_config_file_changed is defined
             - fail2ban_config_file_changed | bool
 
-        - name: Check if the backup file exists and get a checksum
+        - name: Checksum the config file
           ansible.builtin.stat:
             path: "{{ fail2ban_config_file.path }}"
           register: fail2ban_config_file_path
+
+        - name: Check if the backup file exists and get a checksum
+          ansible.builtin.stat:
+            path: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
+          register: fail2ban_config_file_backup_path
 
         - name: Backup absent when the file is unchanged
           ansible.builtin.file:
             path: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
             state: absent
           changed_when: false
-          when: >-
-            ( fail2ban_config_file_changed is not defined ) or
-            ( not fail2ban_config_file_changed | bool )
+          when:
+            - fail2ban_config_file_path.stat.checksum is defined
+            - fail2ban_config_file_backup_path.stat.checksum is defined
+            - fail2ban_config_file_path.stat.checksum == fail2ban_config_file_backup_path.stat.checksum
 
       when: >-
         ( ( not fail2ban_config_file_path.stat.exists | bool ) and

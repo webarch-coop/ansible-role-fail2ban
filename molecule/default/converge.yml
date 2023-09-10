@@ -8,18 +8,31 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-dependency: 
-  name: galaxy
-platforms:
-  - name: instance
-provisioner:
-  name: ansible
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
-verifier:
-  name: ansible
-    # host_vars:
-    #   instance:
-    #     ansible_user: ansible
+- name: Run as root
+  # become: true
+  connection: local
+  # gather_facts: true 
+  hosts:
+    - localhost
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+  
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
+  
+    - name: Debug ansible_user_id
+      ansible.builtin.debug:
+        var: ansible_user_id
+
+    - name: Debug ansible_user_dir
+      ansible.builtin.debug:
+        var: ansible_user_dir
+  
+    - name: Include role as root
+      ansible.builtin.include_role:
+        name: fail2ban
+      vars:  # noqa var-naming[no-role-prefix]
+        fail2ban: true
 ...

@@ -8,6 +8,13 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+- name: Skip the tasks in this role
+  ansible.builtin.debug:
+    msg: "The MariaDB role tasks are not being run since the fail2ban variable is false."
+  when: not fail2ban | bool
+  tags:
+    - fail2ban
+
 - name: Fail2ban
   block:
 
@@ -37,6 +44,17 @@
       loop_control:
         loop_var: fail2ban_config_file
         label: "{{ fail2ban_config_file.path }}"
+
+    - name: Test the fail2ban configuration
+      ansible.builtin.command: fail2ban-client -t
+      check_mode: false
+      changed_when: false
+
+    - name: Service fail2ban enabled started
+      ansible.builtin.systemd_service:
+        name: fail2ban
+        enabled: true
+        state: started
 
   when: fail2ban | bool
   tags:
