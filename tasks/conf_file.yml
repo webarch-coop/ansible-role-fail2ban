@@ -44,11 +44,6 @@
           ansible.builtin.debug:
             var: fail2ban_config_file_existing
 
-      when: fail2ban_config_file_path.stat.exists | bool
-
-    - name: Create or edit the file
-      block:
-
         - name: Backup present
           ansible.builtin.copy:
             src: "{{ fail2ban_config_file.path }}"
@@ -58,6 +53,11 @@
             owner: root
             group: root
           changed_when: false
+
+      when: fail2ban_config_file_path.stat.exists | bool
+
+    - name: Create or edit the file
+      block:
 
         - name: Include the file section edited tasks
           ansible.builtin.include_tasks: conf_file_section.yml
@@ -108,6 +108,11 @@
           when:
             - fail2ban_config_file_changed is defined
             - fail2ban_config_file_changed | bool
+
+        - name: Check if the backup file exists and get a checksum
+          ansible.builtin.stat:
+            path: "{{ fail2ban_config_file.path }}"
+          register: fail2ban_config_file_path
 
         - name: Backup absent when the file is unchanged
           ansible.builtin.file:
