@@ -30,14 +30,6 @@
       ansible.builtin.debug:
         var: ansible_user_dir
 
-    - name: Touch /var/log/auth.log
-      ansible.builtin.file:
-        path: /var/log/auth.log
-        state: touch
-        mode: "0644"
-        owner: root
-        group: root
-
     - name: Include role as root
       ansible.builtin.include_role:
         name: "{{ lookup('ansible.builtin.env', 'CI_PROJECT_NAME') }}"

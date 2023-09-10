@@ -14,7 +14,7 @@ variables:
   ANSIBLE_FORCE_COLOR: "1"
   ANSIBLE_REMOTE_TMP: "/tmp"
   ANSIBLE_SHELL_ALLOW_WORLD_READABLE_TEMP: "1"
-  MOLECULE_VERBOSITY: "0"
+  MOLECULE_VERBOSITY: "2"
   PY_COLORS: "1"
 before_script:
   - whoami
@@ -25,6 +25,7 @@ before_script:
   - yamllint --version
   - which molecule
   - molecule --version
+  - touch /var/log/auth.log
 stages:
   - bookworm
   # - bullseye
