@@ -6,7 +6,9 @@ This repository contains an Ansible role for installing [Fail2ban](https://fail2
 
 ## Usage
 
-By default this role installs `fail2ban` and `iptables` and creates a `/etc/fail2ban/jail.local` file.
+By default this role installs `fail2ban` and creates a `/etc/fail2ban/jail.local` file.
+
+You might want to install `iptables`, `nftables` or `ufw` prious to running this role.
 
 The [alternatives role](https://git.coop/webarch/alternatives) can be used to set the priority for `iptables` or these commands can be run manually:
 
@@ -86,7 +88,3 @@ If you use this role please use a tagged release, see [the release notes](https:
 Copyright 2019-2023 Chris Croome, &lt;[chris@webarchitects.co.uk](mailto:chris@webarchitects.co.uk)&gt;.
 
 This role is released under [the same terms as Ansible itself](https://github.com/ansible/ansible/blob/devel/COPYING), the [GNU GPLv3](LICENSE).
-
-
-
-

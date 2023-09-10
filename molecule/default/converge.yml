@@ -37,6 +37,7 @@
         fail2ban: true
         fail2ban_pkgs:
           - fail2ban
+          - python3-pyinotify
           - ufw
           - whois
 ...
