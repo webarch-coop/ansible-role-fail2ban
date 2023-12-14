@@ -70,7 +70,9 @@
       check_mode: false
       changed_when: false
       register: fail2ban_client_test
-      failed_when: ( "configuration test is successful" not in fail2ban_client_test.stdout )
+      failed_when: >-
+        ( fail2ban_client_test.rc != 0 ) or
+        ( "configuration test is successful" not in fail2ban_client_test.stdout )
 
     - name: Debug stderr from fail2ban configuration test
       ansible.builtin.debug:
