@@ -43,4 +43,22 @@
           - ( "active (running)" in molecule_systemctl_active )
           - ( "enabled; preset: enabled" in molecule_systemctl_loaded )
         quiet: true
+
+    - name: Test the fail2ban configuration
+      ansible.builtin.command: fail2ban-client -t
+      check_mode: false
+      changed_when: false
+      register: molecule_fail2ban_client_test
+
+    - name: Debug the fail2ban configuration test rc
+      ansible.builtin.debug:
+        var: molecule_fail2ban_client_test.rc
+
+    - name: Debug the fail2ban configuration test stderr
+      ansible.builtin.debug:
+        var: molecule_fail2ban_client_test.stderr
+
+    - name: Debug the fail2ban configuration test stdout
+      ansible.builtin.debug:
+        var: molecule_fail2ban_client_test.stdout
 ...
