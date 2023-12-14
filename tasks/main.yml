@@ -28,6 +28,24 @@
         state: present
       notify: Restart fail2ban
 
+    - name: Debug log files to be touched
+      ansible.builtin.debug:
+        var: fail2ban_logpath
+      loop: "{{ fail2ban_config_files | community.general.json_query('[].conf.*.logpath|[][]') }}"
+      loop_control:
+        loop_var: fail2ban_logpath
+
+    - name: Touch log files  # noqa: risky-file-permissions
+      ansible.builtin.file:
+        path: "{{ fail2ban_logpath }}"
+        state: touch
+        access_time: preserve
+        modification_time: preserve
+      loop: "{{ fail2ban_config_files | community.general.json_query('[].conf.*.logpath|[][]') }}"
+      loop_control:
+        loop_var: fail2ban_logpath
+      when: fail2ban_config_files | community.general.json_query('[].conf.*.logpath|[][]') != []
+
     - name: Filters in place
       ansible.builtin.copy:
         src: "files/filter.d/{{ fail2ban_filter }}.conf"
