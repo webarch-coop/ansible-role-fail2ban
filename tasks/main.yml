@@ -37,7 +37,7 @@
       loop_control:
         loop_var: fail2ban_logpath
 
-    - name: Touch log files  # noqa: risky-file-permissions
+    - name: Touch log files without changing ownership or mode  # noqa: risky-file-permissions
       ansible.builtin.file:
         path: "{{ fail2ban_logpath }}"
         state: touch
