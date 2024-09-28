@@ -77,6 +77,49 @@ A list of IP addresses that should never be banned.
 
 Validate all variables starting with `fail2ban_` using [meta/argument_specs.yml](meta/argument_specs.yml), `fail2ban_validate` defaults to true and catches the use of legacy variables.
 
+## Examples
+
+### nftables and systemd
+
+The [systemd role](https://git.coop/webarch/systemd) role can be used to override the default `/usr/lib/systemd/system/fail2ban.service` settings, to ensure that `fail2ban` is restarted with `nftables`, see [this article](https://www.the-art-of-web.com/system/systemd-fail2ban-nftables/), for example:
+
+```yaml
+systemd: true
+systemd_units:
+  - name: fail2ban
+    files:
+      - path: /usr/lib/systemd/system/fail2ban.service.d/override.conf
+        conf:
+          Unit:
+            Requires: nftables.service
+            PartOf: nftables.service
+          Install:
+            WantedBy: multi-user.target nftables.service
+        state: present
+    pkgs:
+      - fail2ban
+    state: enabled
+```
+
+In order to use the systemd journald rather than `/var/log/auth.log` this role can be used with these settings:
+
+```yaml
+fail2ban: true
+fail2ban_config_files:
+  - name: Local jail
+    path: /etc/fail2ban/jail.local
+    state: present
+    conf:
+      DEFAULT:
+        backend: systemd
+        banaction: nftables-multiport
+        banaction_allports: nftables-allports
+        bantime: 86400
+        ignoreip: "{% for fail2ban_ip in fail2ban_whitelist %}{{ fail2ban_ip }}{% if not loop.last %} {% endif %}{% endfor %}"
+      sshd:
+        enabled: true
+```
+
 ## Repository
 
 The primary URL of this repo is [`https://git.coop/webarch/fail2ban`](https://git.coop/webarch/fail2ban) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-fail2ban) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/fail2ban).
