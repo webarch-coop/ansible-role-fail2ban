@@ -11,5 +11,6 @@
 # https://docs.ansible.com/ansible-lint/rules/default_rules.html
 skip_list:
   - key-order[task]
+var_naming_pattern: "^[fail2ban|molecule]_?[a-z0-9_]*$"
 # vim: syntax=yaml
 ...

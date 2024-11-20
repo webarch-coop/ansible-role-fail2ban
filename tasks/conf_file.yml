@@ -20,7 +20,7 @@
         path: "{{ fail2ban_config_file.path }}"
       register: fail2ban_config_file_path
 
-    - name: Delete the file, creating a backup
+    - name: Delete the file, creating a backup, when it is set to be absent
       ansible.builtin.command: "mv {{ fail2ban_config_file.path }} {{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
       args:
         creates: "{{ fail2ban_config_file.path }}.{{ fail2ban_backup_extension }}"
@@ -58,6 +58,18 @@
 
     - name: Create or edit the file
       block:
+
+        # The config files can be templated if cases sensitivity in booloans is not an issue?
+        # https://github.com/fail2ban/fail2ban/discussions/3886
+        # - name: "Template the fail2ban config file at {{ fail2ban_config_file.path }}"
+        #   ansible.builtin.template:
+        #     src: fail2ban.conf.j2
+        #     dest: "{{ fail2ban_config_file.path }}"
+        #     mode: "0644"
+        #     owner: root
+        #     group: root
+        #     validate: fail2ban-client -t
+        #   notify: Restart fail2ban
 
         - name: Include the file section edited tasks
           ansible.builtin.include_tasks: conf_file_section.yml

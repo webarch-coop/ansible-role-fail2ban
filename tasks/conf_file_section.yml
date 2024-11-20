@@ -18,7 +18,7 @@
         option: "{{ fail2ban_config_file_variable_pair.key }}"
         value: "{% if fail2ban_config_file_variable_pair.value | type_debug == 'bool' %}{{ fail2ban_config_file_variable_pair.value | lower }}{% else %}{{ fail2ban_config_file_variable_pair.value }}{% endif %}"
         no_extra_spaces: false
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       when: >-

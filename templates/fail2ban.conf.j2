@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+{% if fail2ban_config_file.name is defined and fail2ban_config_file.name | length > 0 %}
+# {{ fail2ban_config_file.name }}
+{% endif %}
+
+{{ fail2ban_config_file.conf | community.general.to_ini }}
+
+# {# vim: syntax=jinja2 #}vim: syntax=dosini
