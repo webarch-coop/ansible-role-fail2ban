@@ -59,7 +59,7 @@
     - name: Create or edit the file
       block:
 
-        # The config files can be templated if cases sensitivity in booloans is not an issue?
+        # The config files can be templated if case sensitivity in booleans is not an issue?
         # https://github.com/fail2ban/fail2ban/discussions/3886
         # - name: "Template the fail2ban config file at {{ fail2ban_config_file.path }}"
         #   ansible.builtin.template:

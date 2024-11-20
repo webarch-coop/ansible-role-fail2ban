@@ -51,7 +51,7 @@ jammy:
     - molecule test
 noble:
   image: registry.git.coop/webarch/containers/images/noble:20241107
-  stage: bullseye
+  stage: noble
   script:
     - molecule test
 trixie:
