@@ -37,8 +37,8 @@
 
     - name: Set a fact for the argument spec and internal argument spec
       ansible.builtin.set_fact:
-        fail2ban_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml) }}"
-        fail2ban_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | from_yaml) }}"
+        fail2ban_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | ansible.builtin.from_yaml) }}"
+        fail2ban_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | ansible.builtin.from_yaml) }}"
 
     - name: Set a fact for the combined argument spec and internal argument spec
       ansible.builtin.set_fact:
