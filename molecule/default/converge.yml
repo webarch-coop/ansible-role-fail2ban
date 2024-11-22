@@ -36,8 +36,32 @@
       vars:  # noqa var-naming[no-role-prefix]
         fail2ban: true
         fail2ban_pkgs:
-          - fail2ban
-          - python3-pyinotify
-          - ufw
-          - whois
+          - name: bookworm
+            pkgs_present:
+              - fail2ban
+              - python3-pyinotify
+              - ufw
+              - whois
+            pkgs_absent: []
+          - name: trixie
+            pkgs_present:
+              - fail2ban
+              - python3-pyinotify
+              - ufw
+              - whois
+            pkgs_absent: []
+          - name: jammy
+            pkgs_present:
+              - fail2ban
+              - python3-pyinotify
+              - ufw
+              - whois
+            pkgs_absent: []
+          - name: noble
+            pkgs_present:
+              - fail2ban
+              - python3-pyinotify
+              - ufw
+              - whois
+            pkgs_absent: []
 ...
