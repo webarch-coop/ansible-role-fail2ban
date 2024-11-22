@@ -19,16 +19,11 @@
   block:
 
     - name: Validate Fail2ban variables
-      ansible.builtin.include_tasks: validate.yml
-      when: fail2ban_validate | bool
+      ansible.builtin.include_tasks: verify.yml
+      when: fail2ban_verify | bool
 
-    - name: Packages present
-      ansible.builtin.apt:
-        pkg: "{{ fail2ban_pkgs }}"
-        state: present
-        update_cache: true
-        cache_valid_time: 120
-      notify: Restart fail2ban
+    - name: Include fail2ban package tasks
+      ansible.builtin.include_tasks: pkg.yml
 
     - name: Debug log files to be touched
       ansible.builtin.debug:

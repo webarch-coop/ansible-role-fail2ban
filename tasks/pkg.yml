@@ -1,0 +1,113 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Fail2ban packages present and absent
+  block:
+
+    - name: Gather distribution facts
+      ansible.builtin.setup:
+        gather_subset:
+          - distribution
+      when: ansible_facts.distribution_release is not defined
+
+    - name: Distro packages need to be specified
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.distribution_release in (fail2ban_pkgs | community.general.json_query('[].name'))
+        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+        fail_msg: >-
+          The distro {{ ansible_facts.distribution_release }} needs to be listed in the fail2ban_pkgs array, currently the array
+          contains {{ (fail2ban_pkgs | community.general.json_query('[].name')) | join(', ') }}
+
+    - name: Debug fail2ban_pkgs
+      ansible.builtin.debug:
+        var: fail2ban_pkgs
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+    - name: Debug packages present
+      ansible.builtin.debug:
+        var: fail2ban_pkgs_present
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+
+    - name: Debug packages absent
+      ansible.builtin.debug:
+        var: fail2ban_pkgs_absent
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: apt
+      when: ansible_facts.packages is not defined
+
+    - name: Set a fact for the packages installed
+      ansible.builtin.set_fact:
+        fail2ban_pkgs_installed: "{{ ansible_facts.packages.keys() }}"
+
+    - name: Debug fail2ban_pkgs_installed
+      ansible.builtin.debug:
+        var: fail2ban_pkgs_installed
+        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+    - name: Fail2ban packages present
+      ansible.builtin.apt:
+        pkg: "{{ fail2ban_pkgs_present }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 60
+      register: fail2ban_apt_installed
+      notify: Restart fail2ban
+      when: fail2ban_pkgs_present != []
+
+    - name: Fail2ban enabled and started
+      ansible.builtin.systemd_service:
+        name: fail2ban
+        enabled: true
+        state: started
+      when: ( "fail2ban" in fail2ban_pkgs_present )
+
+    - name: Fail2ban stopped and disabled
+      ansible.builtin.systemd_service:
+        name: fail2ban
+        enabled: false
+        state: stopped
+      when: ( "fail2ban" in fail2ban_pkgs_absent )
+
+    - name: Fail2ban packages absent
+      ansible.builtin.apt:
+        pkg: "{{ fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_absent) }}"
+        state: absent
+        update_cache: true
+        cache_valid_time: 60
+      register: fail2ban_apt_removed
+      when: fail2ban_pkgs_absent != []
+
+    - name: Installed packages variable updated
+      block:
+
+        - name: Update package fact when packages have been installed or removed
+          ansible.builtin.package_facts:
+            manager: apt
+
+        - name: Set a fact for the packages present
+          ansible.builtin.set_fact:
+            fail2ban_pkgs_installed: "{{ ansible_facts.packages.keys() }}"
+
+        - name: Debug fail2ban_pkgs_installed
+          ansible.builtin.debug:
+            var: fail2ban_pkgs_installed
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+      when: >-
+        ( ( fail2ban_apt_installed is defined ) and ( fail2ban_apt_installed.changed | bool ) ) or
+        ( ( fail2ban_apt_removed is defined ) and ( fail2ban_apt_removed.changed | bool ) )
+
+  tags:
+    - fail2ban
+...

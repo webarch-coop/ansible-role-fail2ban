@@ -1,0 +1,80 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+argument_specs:
+  main:
+    author: Chris Croome
+    description: An Ansible role for installing Fai2ban on Debian.
+    short_description: The main entry point for the Fail2ban role.
+    options:
+      fail2ban_apt_installed:
+        type: dict
+        required: false
+        description: Results from installing packages.
+      fail2ban_apt_removed:
+        type: dict
+        required: false
+        description: Results from removiong packages.
+      fail2ban_argument_spec:
+        type: dict
+        required: false
+        description: Internal variable for the argument spec.
+      fail2ban_backup_extension:
+        type: str
+        required: false
+        description: Internal variable for the backup file extension.
+      fail2ban_broken_extension:
+        type: str
+        required: false
+        description: Internal variable for the broken file extension.
+      fail2ban_config_file_changed:
+        type: bool
+        required: false
+        description: Internal variable used to track changes to config files.
+      fail2ban_combined_argument_spec:
+        type: dict
+        required: false
+        desciption: Internal variable for the combined argument spec.
+      fail2ban_config_file_b64encoded:
+        type: dict
+        required: false
+        description: Internal variable for the base64 encoded results from slurping the config file.
+      fail2ban_config_file_path:
+        type: dict
+        required: false
+        description: Internal variable for the stat results for the config file path.
+      fail2ban_config_present:
+        type: dict
+        required: false
+        description: Internal variable for the results from templating the fail2ban config file.
+      fail2ban_jpq:
+        type: dict
+        required: true
+        description: A dictionary of JMESPath queries for use with the community.general.json_query module.
+      fail2ban_internal_argument_spec:
+        type: dict
+        required: false
+        description: Internal variable for the internal argument spec.
+      fail2ban_pkgs_absent:
+        type: list
+        elements: str
+        required: false
+        description: A list of packages that should be absent.
+      fail2ban_pkgs_installed:
+        type: list
+        elements: str
+        required: false
+        description: A list of packages that are present.
+      fail2ban_pkgs_present:
+        type: list
+        elements: str
+        required: false
+        description: A list of packages that should be present.
+...

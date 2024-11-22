@@ -14,4 +14,13 @@ fail2banhostvars: "{{ dict(fail2banvarnames | list | zip(q('vars', *fail2banvarn
 
 # Updated to true if the config file has changed
 fail2ban_config_file_changed: false
+
+# JMESPath queries
+fail2ban_jpq:
+  pkgs_absent: "[?name=='{{ ansible_facts.distribution_release }}'].pkgs_absent|[0]"
+  pkgs_present: "[?name=='{{ ansible_facts.distribution_release }}'].pkgs_present|[0]"
+
+# Derived facts
+fail2ban_pkgs_absent: "{{ fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_absent) }}"
+fail2ban_pkgs_present: "{{ fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_present) }}"
 ...

@@ -1,0 +1,62 @@
+# Copyright 2018-2023 Chris Croome
+#
+# This file is part of the Webarchitects Fail2ban Ansible role.
+#
+# The Webarchitects Fail2ban Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Fail2ban Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Fail2ban Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Verify role variables
+  block:
+
+    - name: Debug the hostvars variable names that start with fail2ban_
+      ansible.builtin.debug:
+        var: fail2banvarnames
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Debug the hostvars variable names that start with fail2ban_
+      ansible.builtin.debug:
+        var: fail2banhostvars
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: The fail2banvarnames variable should be defined and should be a list
+      ansible.builtin.assert:
+        that:
+          - fail2banvarnames is defined
+          - fail2banvarnames | ansible.builtin.type_debug == "list"
+        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
+
+    - name: The fail2banhostvars variable should be defined and should be a dictionary
+      ansible.builtin.assert:
+        that:
+          - fail2banhostvars is defined
+          - fail2banhostvars | ansible.builtin.type_debug == "dict"
+        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
+
+    - name: Set a fact for the argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        fail2ban_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml) }}"
+        fail2ban_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | from_yaml) }}"
+
+    - name: Set a fact for the combined argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        fail2ban_combined_argument_spec: "{{ fail2ban_argument_spec | ansible.builtin.combine(fail2ban_internal_argument_spec, recursive=true) }}"
+
+    - name: Check fail2ban_ variables using the combined argument spec
+      ansible.builtin.validate_argument_spec:
+        argument_spec: "{{ fail2ban_combined_argument_spec['argument_specs']['main']['options'] }}"
+        provided_arguments: "{{ fail2banhostvars }}"
+
+    - name: Check that lists of packages present and absent are defined
+      ansible.builtin.assert:
+        that:
+          - (fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_absent)) | type_debug == "list"
+          - (fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_present)) | type_debug == "list"
+        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
+
+  when: fail2ban_verify | bool
+  tags:
+    - fail2ban
+...

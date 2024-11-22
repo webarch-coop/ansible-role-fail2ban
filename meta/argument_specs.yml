@@ -52,18 +52,40 @@ argument_specs:
         elements: str
         required: true
         description: A list of Fail2ban filters that should be present.
+      fail2ban_jpq:
+        type: dict
+        required: true
+        description: A dictionary of JMESPath queries for use with the community.general.json_query module.
       fail2ban_pkgs:
         type: list
-        elements: str
+        elements: dict
         required: true
-        description: A list of .deb packages that should be present.
+        description: A list of distros and deb packages that should be absent and present.
+        options:
+          name:
+            type: str
+            required: true
+            description: The Linux distro name.
+            choices:
+              - bookworm
+              - jammy
+              - noble
+              - trixie
+          pkgs_absent:
+            type: list
+            required: false
+            description: A list of deb packages that should be absent.
+          pkgs_present:
+            type: list
+            required: false
+            description: A list of deb packages that should be present.
       fail2ban_whitelist:
         type: list
         elements: str
         required: true
         description: A list of IP address to whitelist.
-      fail2ban_validate:
+      fail2ban_verify:
         type: bool
         required: true
-        description: Vaildate all variables that start with fail2ban_.
+        description: Verify all variables that start with fail2ban_.
 ...

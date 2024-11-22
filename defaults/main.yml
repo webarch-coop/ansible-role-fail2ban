@@ -26,15 +26,31 @@ fail2ban_config_files:
         enabled: true
         bantime: 86400
 fail2ban_pkgs:
-  - fail2ban
-  # - iptables
-  # - iptables-persistent
-  # - netfilter-persistent
-  # - nftables
-  - python3-pyinotify
-  # - ufw
-  - whois
+  - name: bookworm
+    pkgs_present:
+      - fail2ban
+      - python3-pyinotify
+      - whois
+    pkgs_absent: []
+  - name: trixie
+    pkgs_present:
+      - fail2ban
+      - python3-pyinotify
+      - whois
+    pkgs_absent: []
+  - name: jammy
+    pkgs_present:
+      - fail2ban
+      - python3-pyinotify
+      - whois
+    pkgs_absent: []
+  - name: noble
+    pkgs_present:
+      - fail2ban
+      - python3-pyinotify
+      - whois
+    pkgs_absent: []
 fail2ban_whitelist:
   - "127.0.0.1"
-fail2ban_validate: true
+fail2ban_verify: true
 ...
