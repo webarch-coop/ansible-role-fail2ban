@@ -49,13 +49,6 @@
         argument_spec: "{{ fail2ban_combined_argument_spec['argument_specs']['main']['options'] }}"
         provided_arguments: "{{ fail2banhostvars }}"
 
-    - name: Check that lists of packages present and absent are defined
-      ansible.builtin.assert:
-        that:
-          - (fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_absent)) | type_debug == "list"
-          - (fail2ban_pkgs | community.general.json_query(fail2ban_jpq.pkgs_present)) | type_debug == "list"
-        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
-
   when: fail2ban_verify | bool
   tags:
     - fail2ban

@@ -68,6 +68,7 @@ argument_specs:
             description: The Linux distro name.
             choices:
               - bookworm
+              - bullseye
               - jammy
               - noble
               - trixie

@@ -32,6 +32,12 @@ fail2ban_pkgs:
       - python3-pyinotify
       - whois
     pkgs_absent: []
+  - name: bullseye
+    pkgs_present:
+      - fail2ban
+      - python3-pyinotify
+      - whois
+    pkgs_absent: []
   - name: trixie
     pkgs_present:
       - fail2ban

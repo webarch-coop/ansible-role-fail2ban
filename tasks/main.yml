@@ -22,6 +22,9 @@
       ansible.builtin.include_tasks: verify.yml
       when: fail2ban_verify | bool
 
+    - name: Check Fail2ban variables
+      ansible.builtin.include_tasks: check.yml
+
     - name: Include fail2ban package tasks
       ansible.builtin.include_tasks: pkg.yml
 
